@@ -15,9 +15,18 @@ services:
     image: quay.io/keycloak/keycloak:26.0.7
     container_name: iam-guardian-keycloak
     command: start-dev --import-realm
+    depends_on:
+      - postgres
     environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/iamguardian
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+
+      KC_HTTP_PORT: 8080
     ports:
       - "8081:8080"
     volumes:
