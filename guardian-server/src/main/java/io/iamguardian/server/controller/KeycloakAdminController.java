@@ -1,10 +1,8 @@
 package io.iamguardian.server.controller;
 
-import io.iamguardian.server.controller.dto.*;
+import io.iamguardian.server.controller.dto.keycloak.*;
 import io.iamguardian.server.service.KeycloakAdminService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -65,5 +63,10 @@ public class KeycloakAdminController {
     @GetMapping("/api/admin/access/insights/elevated-users")
     public List<ElevatedAccessInsightResponse> listElevatedUserInsights() {
         return keycloakAdminService.listElevatedUserInsights();
+    }
+
+    @PostMapping("/api/admin/access/remediation/remove-user-from-group")
+    public RemediationResponse removeUserFromGroup(@RequestBody RemoveUserFromGroupRequest request) {
+        return keycloakAdminService.removeUserFromGroup(request);
     }
 }

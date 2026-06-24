@@ -1,7 +1,7 @@
 package io.iamguardian.server.service;
 
 import io.iamguardian.server.config.KeycloakProperties;
-import io.iamguardian.server.controller.dto.*;
+import io.iamguardian.server.controller.dto.keycloak.*;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -174,5 +174,33 @@ public class KeycloakAdminService {
                 .findFirst()
                 .orElse(explanation.user().username()
                         + " has app-admin, but no group-based grant was found");
+    }
+
+    public RemediationResponse removeUserFromGroup(RemoveUserFromGroupRequest request) {
+        KeycloakUserResponse user = getUser(request.userId());
+
+        KeycloakGroupResponse group = listUserGroups(request.userId()).stream()
+                .filter(existingGroup -> existingGroup.id().equals(request.groupId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("User is not a member of this group"));
+
+        if (request.dryRun()) {
+            return new RemediationResponse(
+                    "REMOVE_USER_FROM_GROUP",
+                    true,
+                    "Would remove " + user.username() + " from " + group.name()
+            );
+        }
+
+        keycloak.realm(properties.realm())
+                .users()
+                .get(request.userId())
+                .leaveGroup(request.groupId());
+
+        return new RemediationResponse(
+                "REMOVE_USER_FROM_GROUP",
+                false,
+                "Removed " + user.username() + " from " + group.name()
+        );
     }
 }

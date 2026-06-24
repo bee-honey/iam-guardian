@@ -1,4 +1,4 @@
-package io.iamguardian.server.controller;
+package io.iamguardian.server.controller.check;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
