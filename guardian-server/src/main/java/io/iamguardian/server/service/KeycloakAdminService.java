@@ -148,4 +148,31 @@ public class KeycloakAdminService {
                 listUserRoles(userId)
         );
     }
+
+    public List<ElevatedAccessInsightResponse> listElevatedUserInsights() {
+        return listAllUserAccess().stream()
+                .filter(access -> access.effectiveRoles().stream()
+                        .anyMatch(role -> role.name().equals("app-admin")))
+                .map(access -> new ElevatedAccessInsightResponse(
+                        access.user(),
+                        "app-admin",
+                        buildAdminReason(access.user().id())
+                ))
+                .toList();
+    }
+
+    private String buildAdminReason(String userId) {
+        UserAccessExplanationResponse explanation = explainUserAccess(userId);
+
+        return explanation.groupAssignments().stream()
+                .filter(groupAssignment -> groupAssignment.rolesGranted().stream()
+                        .anyMatch(role -> role.name().equals("app-admin")))
+                .map(groupAssignment -> explanation.user().username()
+                        + " has app-admin because group "
+                        + groupAssignment.group().name()
+                        + " grants app-admin")
+                .findFirst()
+                .orElse(explanation.user().username()
+                        + " has app-admin, but no group-based grant was found");
+    }
 }

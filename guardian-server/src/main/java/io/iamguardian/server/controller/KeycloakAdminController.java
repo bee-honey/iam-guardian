@@ -61,4 +61,9 @@ public class KeycloakAdminController {
     public UserAccessExplanationResponse explainUserAccess(@PathVariable String userId) {
         return keycloakAdminService.explainUserAccess(userId);
     }
+
+    @GetMapping("/api/admin/access/insights/elevated-users")
+    public List<ElevatedAccessInsightResponse> listElevatedUserInsights() {
+        return keycloakAdminService.listElevatedUserInsights();
+    }
 }
