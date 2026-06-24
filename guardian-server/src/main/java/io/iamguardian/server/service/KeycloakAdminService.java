@@ -104,4 +104,17 @@ public class KeycloakAdminService {
                 listUserRoles(userId)
         );
     }
+
+    public List<UserAccessResponse> listAllUserAccess() {
+        return listUsers().stream()
+                .map(user -> getUserAccess(user.id()))
+                .toList();
+    }
+
+    public List<UserAccessResponse> listAdminUsers() {
+        return listAllUserAccess().stream()
+                .filter(access -> access.effectiveRoles().stream()
+                        .anyMatch(role -> role.name().equals("app-admin")))
+                .toList();
+    }
 }

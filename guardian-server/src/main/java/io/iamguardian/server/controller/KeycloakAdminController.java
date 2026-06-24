@@ -44,4 +44,14 @@ public class KeycloakAdminController {
     public UserAccessResponse getUserAccess(@PathVariable String userId) {
         return keycloakAdminService.getUserAccess(userId);
     }
+
+    @GetMapping("/api/admin/access/users")
+    public List<UserAccessResponse> listAllUserAccess() {
+        return keycloakAdminService.listAllUserAccess();
+    }
+
+    @GetMapping("/api/admin/access/admins")
+    public List<UserAccessResponse> listAdminUsers() {
+        return keycloakAdminService.listAdminUsers();
+    }
 }
