@@ -1,6 +1,6 @@
-package io.iamguardian.server.controllers;
+package io.iamguardian.server.controller;
 
-import io.iamguardian.server.controllers.dto.CurrentUserResponse;
+import io.iamguardian.server.controller.dto.CurrentUserResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;

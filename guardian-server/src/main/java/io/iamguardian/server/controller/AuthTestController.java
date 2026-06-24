@@ -1,4 +1,4 @@
-package io.iamguardian.server.controllers;
+package io.iamguardian.server.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;

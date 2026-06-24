@@ -1,6 +1,6 @@
 package io.iamguardian.server;
 
-import io.iamguardian.server.keycloak.KeycloakProperties;
+import io.iamguardian.server.config.KeycloakProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

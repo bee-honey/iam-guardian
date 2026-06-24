@@ -1,4 +1,4 @@
-package io.iamguardian.server.controllers.dto;
+package io.iamguardian.server.controller.dto;
 
 import java.util.List;
 
