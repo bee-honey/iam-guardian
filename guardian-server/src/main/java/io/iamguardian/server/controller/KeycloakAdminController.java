@@ -1,7 +1,9 @@
 package io.iamguardian.server.controller;
 
 import io.iamguardian.server.controller.dto.KeycloakGroupResponse;
+import io.iamguardian.server.controller.dto.KeycloakRoleResponse;
 import io.iamguardian.server.controller.dto.KeycloakUserResponse;
+import io.iamguardian.server.controller.dto.UserAccessResponse;
 import io.iamguardian.server.service.KeycloakAdminService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,5 +33,15 @@ public class KeycloakAdminController {
     @GetMapping("/api/admin/keycloak/users/{userId}/groups")
     public List<KeycloakGroupResponse> listUserGroups(@PathVariable String userId) {
         return keycloakAdminService.listUserGroups(userId);
+    }
+
+    @GetMapping("/api/admin/keycloak/users/{userId}/roles")
+    public List<KeycloakRoleResponse> listUserRoles(@PathVariable String userId) {
+        return keycloakAdminService.listUserRoles(userId);
+    }
+
+    @GetMapping("/api/admin/access/users/{userId}")
+    public UserAccessResponse getUserAccess(@PathVariable String userId) {
+        return keycloakAdminService.getUserAccess(userId);
     }
 }

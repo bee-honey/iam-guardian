@@ -2,8 +2,11 @@ package io.iamguardian.server.service;
 
 import io.iamguardian.server.config.KeycloakProperties;
 import io.iamguardian.server.controller.dto.KeycloakGroupResponse;
+import io.iamguardian.server.controller.dto.KeycloakRoleResponse;
 import io.iamguardian.server.controller.dto.KeycloakUserResponse;
+import io.iamguardian.server.controller.dto.UserAccessResponse;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +63,45 @@ public class KeycloakAdminService {
                         group.getPath()
                 ))
                 .toList();
+    }
+
+    public List<KeycloakRoleResponse> listUserRoles(String userId) {
+        List<RoleRepresentation> roles = keycloak.realm(properties.realm())
+                .users()
+                .get(userId)
+                .roles()
+                .realmLevel()
+                .listEffective();
+
+        return roles.stream()
+                .map(role -> new KeycloakRoleResponse(
+                        role.getId(),
+                        role.getName(),
+                        role.getDescription()
+                ))
+                .filter(role -> role.name().startsWith("app-"))
+                .toList();
+    }
+
+    public KeycloakUserResponse getUser(String userId) {
+        var user = keycloak.realm(properties.realm())
+                .users()
+                .get(userId)
+                .toRepresentation();
+
+        return new KeycloakUserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.isEnabled()
+        );
+    }
+
+    public UserAccessResponse getUserAccess(String userId) {
+        return new UserAccessResponse(
+                getUser(userId),
+                listUserGroups(userId),
+                listUserRoles(userId)
+        );
     }
 }
