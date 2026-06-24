@@ -1,10 +1,7 @@
 package io.iamguardian.server.service;
 
 import io.iamguardian.server.config.KeycloakProperties;
-import io.iamguardian.server.controller.dto.KeycloakGroupResponse;
-import io.iamguardian.server.controller.dto.KeycloakRoleResponse;
-import io.iamguardian.server.controller.dto.KeycloakUserResponse;
-import io.iamguardian.server.controller.dto.UserAccessResponse;
+import io.iamguardian.server.controller.dto.*;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -116,5 +113,39 @@ public class KeycloakAdminService {
                 .filter(access -> access.effectiveRoles().stream()
                         .anyMatch(role -> role.name().equals("app-admin")))
                 .toList();
+    }
+
+    public List<KeycloakRoleResponse> listGroupRoles(String groupId) {
+        return keycloak.realm(properties.realm())
+                .groups()
+                .group(groupId)
+                .roles()
+                .realmLevel()
+                .listAll()
+                .stream()
+                .map(role -> new KeycloakRoleResponse(
+                        role.getId(),
+                        role.getName(),
+                        role.getDescription()
+                ))
+                .filter(role -> role.name().startsWith("app-"))
+                .toList();
+    }
+
+    public UserAccessExplanationResponse explainUserAccess(String userId) {
+        KeycloakUserResponse user = getUser(userId);
+
+        List<GroupRoleGrantResponse> groupAssignments = listUserGroups(userId).stream()
+                .map(group -> new GroupRoleGrantResponse(
+                        group,
+                        listGroupRoles(group.id())
+                ))
+                .toList();
+
+        return new UserAccessExplanationResponse(
+                user,
+                groupAssignments,
+                listUserRoles(userId)
+        );
     }
 }
